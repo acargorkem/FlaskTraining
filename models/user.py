@@ -50,6 +50,6 @@ class TokenBlocklist(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    @staticmethod
-    def get_token(jti):
-        db.session.query(TokenBlocklist.id).filter_by(jti=jti).scalar()
+    @classmethod
+    def get_token(cls, jti):
+        return db.session.query(cls.id).filter_by(jti=jti).first()
