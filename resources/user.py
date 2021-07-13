@@ -1,7 +1,9 @@
 import hmac
+from datetime import datetime
+from datetime import timezone
 
 from flask_restful import Resource, reqparse
-from models.user import UserModel
+from models.user import UserModel, TokenBlocklist
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -63,6 +65,16 @@ class UserLogin(Resource):
                    }, 200
 
         return {'message': 'Invalid credentials'}, 401
+
+
+class UserLogout(Resource):
+    @jwt_required()
+    def post(self):
+        jti = get_jwt()["jti"]
+        now = datetime.now(timezone.utc)
+        token_blocklist = TokenBlocklist(jti, now)
+        token_blocklist.save_to_db()
+        return {'message': 'Successfully logged out.'}, 200
 
 
 class TokenRefresh(Resource):
