@@ -25,7 +25,7 @@ api = Api(app)
 jwt = JWTManager(app)
 
 
-@jwt.additional_claims_loader()
+@jwt.additional_claims_loader
 def add_claims_to_jwt(identity):
     if identity == 1:
         return {'is_admin': True}
