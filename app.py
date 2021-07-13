@@ -36,7 +36,7 @@ def add_claims_to_jwt(identity):
 @jwt.token_in_blocklist_loader
 def check_if_token_revoked(jwt_header, jwt_payload):
     jti = jwt_payload["jti"]
-    token = db.session.query(TokenBlocklist.id).filter_by(jti=jti).scalar()
+    token = TokenBlocklist.get_token(jti)
     return token is not None
 
 

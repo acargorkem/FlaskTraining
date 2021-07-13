@@ -49,3 +49,7 @@ class TokenBlocklist(db.Model):
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
+
+    @staticmethod
+    def get_token(jti):
+        db.session.query(TokenBlocklist.id).filter_by(jti=jti).scalar()
