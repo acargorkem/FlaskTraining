@@ -1,4 +1,6 @@
 import os
+import re
+
 from flask import Flask
 from flask_restful import Api
 from flask_jwt import JWT
@@ -8,8 +10,15 @@ from resources.user import UserRegister
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
 
+''' https://help.heroku.com/ZKNTJQSK/why-is-sqlalchemy-1-4-x-not-connecting-to-heroku-postgres '''
+uri = os.getenv("DATABASE_URL")  # or other relevant config var
+if uri.startswith("postgres://"):
+    uri = uri.replace("postgres://", "postgresql://", 1)
+# rest of connection code using the connection string `uri`
+
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(uri, 'sqlite:///data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'gorkem'
 api = Api(app)
