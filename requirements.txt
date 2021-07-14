@@ -1,6 +1,9 @@
-﻿Flask
+﻿Flask~=2.0.1
 Flask-RESTful
 Flask-JWT-Extended
 Flask-SQLAlchemy
 gunicorn
 psycopg2
+marshmallow
+flask-marshmallow
+marshmallow-sqlalchemy

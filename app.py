@@ -1,5 +1,8 @@
 import os
+from datetime import timedelta
 
+from marshmallow import ValidationError
+from ma import ma
 from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
@@ -15,6 +18,7 @@ if uri.startswith("postgres://"):
     uri = uri.replace("postgres://", "postgresql://", 1)
 # rest of connection code using the connection string `uri`
 
+ACCESS_EXPIRES = timedelta(hours=1)
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = uri
@@ -22,6 +26,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.secret_key = 'gorkem'
 api = Api(app)
+
+
+@app.errorhandler(ValidationError)
+def handle_marshmallow_validation(err):
+    return jsonify(err.messages), 400
+
 
 jwt = JWTManager(app)
 
@@ -37,6 +47,7 @@ def add_claims_to_jwt(identity):
 def check_if_token_revoked(jwt_header, jwt_payload):
     jti = jwt_payload["jti"]
     token = TokenBlocklist.get_token(jti)
+    print(token)
     return token is not None
 
 
@@ -80,18 +91,19 @@ def revoked_token_callback(jwt_header, jwt_payload):
     }), 401
 
 
+api.add_resource(UserRegister, '/register')
+api.add_resource(User, '/user/<int:user_id>')
+api.add_resource(UserLogin, '/login')
+api.add_resource(TokenRefresh, '/refresh')
+api.add_resource(UserLogout, '/logout')
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(ItemList, '/items')
 api.add_resource(Store, '/store/<string:name>')
 api.add_resource(StoreList, '/stores')
-api.add_resource(User, '/user<int:user_id>')
-api.add_resource(UserRegister, '/register')
-api.add_resource(UserLogin, '/login')
-api.add_resource(UserLogout, '/logout')
-api.add_resource(TokenRefresh, '/refresh')
 
 if __name__ == '__main__':
     from db import db
 
     db.init_app(app)
+    ma.init_app(app)
     app.run(host='0.0.0.0', port=5000, debug=True)
