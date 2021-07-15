@@ -1,7 +1,6 @@
 from ma import ma
 
 from models.store import StoreModel
-from models.item import ItemModel
 from schemas.item import ItemSchema
 
 

@@ -12,8 +12,6 @@ class ItemModel(db.Model):
 
     store_id = db.Column(db.Integer, db.ForeignKey('stores.id'), nullable=False)
 
-    # store = db.relationship('StoreModel')
-
     @classmethod
     def find_by_name(cls, name: str) -> "ItemModel":
         return cls.query.filter_by(name=name).first()
