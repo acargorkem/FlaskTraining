@@ -4,7 +4,7 @@ Using flask to build a restful api. Deployed on Heroku.
 Install with pip:
 `$ pip install -r requirements.txt`
 
-Create an ".env" file with your variables. (check .env example)
+Create ".env" file with your variables. (check .env example)
 
 ## Documentation
 
